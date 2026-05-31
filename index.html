@@ -87,9 +87,18 @@ h2{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,54px);font-we
 .urg{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);padding:10px 20px;margin-bottom:36px;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--d);}
 .ud{width:6px;height:6px;background:var(--d);border-radius:50%;animation:lpp 1.5s ease-in-out infinite;}
 @keyframes lpp{0%,100%{opacity:1;}50%{opacity:.3;}}
-footer{background:#050402;border-top:1px solid rgba(201,168,76,.1);padding:48px 80px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;}
+footer{background:#050402;border-top:1px solid rgba(201,168,76,.1);padding:48px 80px;}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:40px;margin-bottom:40px;}
 .fm{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--d);letter-spacing:1px;}
-.fi{font-size:12px;color:#504030;line-height:1.8;text-align:right;}
+.footer-tagline{font-size:12px;color:#504030;margin-top:8px;}
+.footer-links{display:flex;gap:48px;flex-wrap:wrap;}
+.footer-col h4{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--d);margin-bottom:16px;}
+.footer-col a{display:block;font-size:13px;color:#908070;text-decoration:none;margin-bottom:10px;transition:color 0.2s;}
+.footer-col a:hover{color:var(--d);}
+.footer-bottom{border-top:1px solid rgba(201,168,76,.05);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.footer-copy{font-size:11px;color:#302010;}
+.footer-privacy a{font-size:11px;color:#504030;text-decoration:none;}
+.footer-privacy a:hover{color:var(--d);}
 .waf{position:fixed;bottom:24px;right:24px;z-index:9999;width:60px;height:60px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.4);text-decoration:none;}
 .wap{position:fixed;bottom:24px;right:24px;z-index:9998;width:60px;height:60px;background:#25d366;border-radius:50%;animation:wpp 2s ease-out infinite;opacity:0;pointer-events:none;}
 @keyframes wpp{0%{transform:scale(1);opacity:.6;}100%{transform:scale(1.8);opacity:0;}}
@@ -112,7 +121,7 @@ h1{font-size:clamp(32px,8vw,48px);text-align:center;}
 .srv{padding:72px 24px;}
 .sg{grid-template-columns:1fr;}
 .cf{padding:80px 24px;}
-footer{padding:40px 24px;flex-direction:column;text-align:center;}
+footer{padding:40px 24px;}.footer-top{flex-direction:column;}.footer-links{gap:32px;}.footer-bottom{flex-direction:column;text-align:center;}
 .fi{text-align:center;}
 .waf,.wap{width:54px;height:54px;bottom:20px;right:20px;}
 }
@@ -183,8 +192,33 @@ footer{padding:40px 24px;flex-direction:column;text-align:center;}
 </div>
 </section>
 <footer>
-<div class="fm">Mãe Milena</div>
-<div class="fi">Atendimento espiritual sigiloso<br>Segunda a sábado · 9h às 20h</div>
+<div class="footer-top">
+  <div>
+    <div class="fm">Mãe Milena</div>
+    <p class="footer-tagline">Atendimento espiritual sigiloso<br>Segunda a sábado · 9h às 20h</p>
+  </div>
+  <div class="footer-links">
+    <div class="footer-col">
+      <h4>Serviços</h4>
+      <a href="/amarracao-amorosa">Amarração Amorosa</a>
+      <a href="/uniao-de-casal">União de Casal</a>
+      <a href="/adocamento-amoroso">Adoçamento Amoroso</a>
+      <a href="/afastamento-de-rivais">Afastamento de Rivais</a>
+    </div>
+    <div class="footer-col">
+      <h4>Informações</h4>
+      <a href="/depoimentos">Depoimentos</a>
+      <a href="https://wa.me/5511971162445?text=Ol%C3%A1%20M%C3%A3e%20Milena%2C%20gostaria%20de%20um%20atendimento" target="_blank" rel="noopener">Falar via WhatsApp</a>
+      <a href="/politica-de-privacidade">Política de Privacidade</a>
+    </div>
+  </div>
+</div>
+<div class="footer-bottom">
+  <span class="footer-copy">© 2025 Mãe Milena · Todos os direitos reservados</span>
+  <div class="footer-privacy">
+    <a href="/politica-de-privacidade">Política de Privacidade</a>
+  </div>
+</div>
 </footer>
 </body>
 </html>
