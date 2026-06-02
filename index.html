@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="/hero.webp">  
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17663413301"></script>
 <script>
@@ -18,7 +17,13 @@
   gtag('config', 'AW-17663413301');
 </script>
 <script>
+var conversionFired = false;
 function gtag_report_conversion(url) {
+  if (conversionFired) {
+    if (typeof(url) != 'undefined') { window.location = url; }
+    return false;
+  }
+  conversionFired = true;
   var callback = function () {
     if (typeof(url) != 'undefined') { window.location = url; }
   };
@@ -43,7 +48,7 @@ body{font-family:'Lato',sans-serif;background:var(--p);color:var(--c);overflow-x
 h1{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,4.5vw,62px);font-weight:700;line-height:1.1;color:var(--c);margin-bottom:24px;}
 h1 em{font-style:italic;color:var(--dc);}
 .sub{font-size:clamp(15px,1.4vw,18px);line-height:1.7;color:#c8bfb0;margin-bottom:40px;max-width:480px;font-weight:300;}
-.btn{display:inline-block;background:var(--d);color:var(--p);font-family:'Lato',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:18px 36px;text-decoration:none;cursor:pointer;border:none;}
+.btn{display:inline-block;background:#25d366;color:#fff;font-family:'Lato',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:18px 36px;text-decoration:none;cursor:pointer;border:none;}
 .selos{display:flex;gap:24px;margin-top:40px;flex-wrap:wrap;}
 .selo{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#a09080;}
 .si{width:18px;height:18px;fill:var(--d);flex-shrink:0;}
@@ -145,7 +150,7 @@ footer{padding:40px 24px;}.footer-top{flex-direction:column;}.footer-links{gap:3
 <div class="selo"><svg class="si" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"/></svg>25 anos de experiência</div>
 </div>
 </div>
-<div class="hi"><img src="/hero.webp" alt="Mãe Milena – Especialista em Amarração Amorosa" width="800" height="1000" fetchpriority="high"></div>
+<div class="hi"><img src="https://i.ibb.co/jkX6085p/Whats-App-Image-2026-05-31-at-15-55-57.jpg" alt="Mãe Milena – Especialista em Amarração Amorosa" width="800" height="1000" fetchpriority="high"></div>
 </section>
 <section class="aut">
 <div class="ag">
