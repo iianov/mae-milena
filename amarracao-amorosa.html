@@ -17,10 +17,28 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{font-family:'Lato',sans-serif;background:var(--p);color:var(--c);overflow-x:hidden;margin:0;}
-nav{background:#0a0804;border-bottom:1px solid rgba(201,168,76,.2);padding:20px 80px;display:flex;justify-content:space-between;align-items:center;}
-.nav-marca{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--d);text-decoration:none;}
-.nav-back{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#908070;text-decoration:none;}
-.nav-back:hover{color:var(--d);}
+
+/* NAV */
+nav{background:#0a0804;border-bottom:1px solid rgba(201,168,76,.2);padding:20px 80px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;}
+.nav-marca{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--d);text-decoration:none;flex-shrink:0;}
+.nav-links{display:flex;gap:28px;align-items:center;list-style:none;}
+.nav-links a{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#908070;text-decoration:none;transition:color .2s;}
+.nav-links a:hover,.nav-links a.ativo{color:var(--d);}
+.nav-wpp{background:#25d366;color:#fff !important;padding:10px 18px;font-size:11px !important;}
+.nav-wpp:hover{background:#20ba5a;color:#fff !important;}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:4px;flex-direction:column;gap:5px;}
+.nav-toggle span{display:block;width:24px;height:2px;background:var(--d);transition:all .3s;}
+.nav-toggle.aberto span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav-toggle.aberto span:nth-child(2){opacity:0;}
+.nav-toggle.aberto span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.nav-mobile{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,8,4,.97);z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:32px;}
+.nav-mobile.aberto{display:flex;}
+.nav-mobile a{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--c);text-decoration:none;letter-spacing:1px;}
+.nav-mobile a:hover,.nav-mobile a.ativo{color:var(--d);}
+.nav-mobile .nav-wpp-mobile{background:#25d366;color:#fff;padding:16px 40px;font-family:'Lato',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:8px;}
+.nav-mobile-fechar{position:absolute;top:24px;right:24px;background:none;border:none;color:var(--c);font-size:32px;cursor:pointer;line-height:1;}
+
+/* HERO */
 .hero-page{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px 80px;position:relative;overflow:hidden;}
 .hero-page::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(201,168,76,.08) 0%,transparent 65%);pointer-events:none;}
 .hero-page-inner{position:relative;z-index:1;max-width:800px;}
@@ -28,13 +46,18 @@ nav{background:#0a0804;border-bottom:1px solid rgba(201,168,76,.2);padding:20px 
 h1{font-family:'Cormorant Garamond',serif;font-size:clamp(38px,5vw,68px);font-weight:700;line-height:1.1;color:var(--c);margin-bottom:24px;}
 h1 em{font-style:italic;color:var(--dc);}
 .hero-sub{font-size:clamp(16px,1.5vw,20px);line-height:1.7;color:#c8bfb0;font-weight:300;margin-bottom:40px;}
-.btn{display:inline-block;background:var(--d);color:var(--p);font-family:'Lato',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:18px 40px;text-decoration:none;cursor:pointer;}
-.btn:hover{background:var(--dc);}
+.btn{display:inline-block;background:#25d366;color:#fff;font-family:'Lato',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:18px 40px;text-decoration:none;cursor:pointer;border:none;}
+.btn:hover{background:#20ba5a;}
+.btn-gold{background:var(--d);color:var(--p);}
+.btn-gold:hover{background:var(--dc);}
 .horario-hero{margin-top:16px;font-size:12px;color:#504030;letter-spacing:1px;}
 .scroll-hint{margin-top:48px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#504030;}
+
+/* CONTENT */
 .content{max-width:900px;margin:0 auto;padding:80px;border-top:1px solid rgba(201,168,76,.1);}
 h2{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,3vw,42px);font-weight:600;color:var(--c);line-height:1.2;margin-bottom:20px;margin-top:60px;}
 h2:first-child{margin-top:0;}
+h3{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,2vw,28px);font-weight:600;color:var(--c);margin-bottom:12px;}
 p{font-size:clamp(15px,1.3vw,18px);line-height:1.8;color:#c8bfb0;font-weight:300;margin-bottom:20px;}
 .destaque{background:#0f0b06;border-left:3px solid var(--d);padding:32px 40px;margin:40px 0;}
 .destaque p{color:var(--ce);font-family:'Cormorant Garamond',serif;font-size:clamp(18px,1.8vw,24px);font-style:italic;margin:0;}
@@ -42,24 +65,87 @@ p{font-size:clamp(15px,1.3vw,18px);line-height:1.8;color:#c8bfb0;font-weight:300
 .lista li{display:flex;align-items:flex-start;gap:16px;padding:16px 0;border-bottom:1px solid rgba(201,168,76,.08);font-size:clamp(15px,1.3vw,18px);line-height:1.6;color:#c8bfb0;font-weight:300;}
 .lista li:first-child{border-top:1px solid rgba(201,168,76,.08);}
 .lista-dot{width:6px;height:6px;background:var(--d);border-radius:50%;flex-shrink:0;margin-top:8px;}
+
+/* ETAPAS */
+.etapas{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin:40px 0;}
+.etapa{background:#0f0b06;border:1px solid rgba(201,168,76,.1);padding:32px 28px;text-align:center;}
+.etapa-num{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:700;color:var(--d);line-height:1;display:block;margin-bottom:12px;}
+.etapa h3{font-size:16px;margin-bottom:8px;}
+.etapa p{font-size:14px;color:#908070;margin:0;}
+
+/* DEPOIMENTOS */
+.deps{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin:40px 0;}
+.dep{background:#0f0b06;border:1px solid rgba(201,168,76,.1);padding:36px 28px;position:relative;}
+.dep::before{content:'"';font-family:'Cormorant Garamond',serif;font-size:80px;color:var(--d);opacity:.15;position:absolute;top:-5px;left:16px;line-height:1;}
+.dep-texto{font-family:'Cormorant Garamond',serif;font-size:clamp(16px,1.4vw,19px);font-style:italic;line-height:1.6;color:var(--ce);position:relative;z-index:1;}
+.dep-autor{margin-top:20px;display:flex;align-items:center;gap:10px;}
+.dep-linha{width:20px;height:1px;background:var(--d);}
+.dep-nome{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--d);}
+
+/* FAQ */
+.faq{margin:40px 0;}
+.faq-item{border-bottom:1px solid rgba(201,168,76,.1);}
+.faq-item:first-child{border-top:1px solid rgba(201,168,76,.1);}
+.faq-pergunta{width:100%;background:none;border:none;color:var(--c);font-family:'Lato',sans-serif;font-size:clamp(15px,1.3vw,18px);font-weight:700;text-align:left;padding:24px 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;}
+.faq-pergunta:hover{color:var(--d);}
+.faq-icone{font-size:22px;color:var(--d);flex-shrink:0;transition:transform .3s;}
+.faq-resposta{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+.faq-resposta-inner{padding:0 0 24px;}
+.faq-resposta-inner p{margin:0;font-size:clamp(14px,1.2vw,17px);}
+.faq-item.aberto .faq-icone{transform:rotate(45deg);}
+.faq-item.aberto .faq-resposta{max-height:300px;}
+
+/* OUTROS SERVIÇOS */
+.outros-servicos{background:#0f0b06;border-top:1px solid rgba(201,168,76,.1);border-bottom:1px solid rgba(201,168,76,.1);padding:80px;}
+.outros-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;max-width:900px;margin:40px auto 0;}
+.outro-card{background:var(--p);border:1px solid rgba(201,168,76,.1);padding:32px 28px;text-decoration:none;transition:border-color .2s;}
+.outro-card:hover{border-color:var(--d);}
+.outro-card h3{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--c);margin-bottom:8px;}
+.outro-card p{font-size:13px;color:#908070;margin:0;font-weight:300;}
+.outro-card .seta{display:block;margin-top:16px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--d);}
+
+/* CTA FINAL */
 .cta-section{background:#0f0b06;border-top:1px solid rgba(201,168,76,.2);padding:80px;text-align:center;}
 .cta-inner{max-width:600px;margin:0 auto;}
 .cta-inner h2{margin-top:0;}
 .cta-sub{font-size:clamp(15px,1.3vw,18px);color:#908070;line-height:1.7;margin-bottom:40px;font-weight:300;}
+
+/* FLOAT WPP */
 .waf{position:fixed;bottom:24px;right:24px;z-index:9999;width:60px;height:60px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.4);text-decoration:none;}
 .wap{position:fixed;bottom:24px;right:24px;z-index:9998;width:60px;height:60px;background:#25d366;border-radius:50%;animation:wpp 2s ease-out infinite;opacity:0;pointer-events:none;}
 @keyframes wpp{0%{transform:scale(1);opacity:.6;}100%{transform:scale(1.8);opacity:0;}}
-footer{background:#050402;border-top:1px solid rgba(201,168,76,.1);padding:40px 80px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;}
-.fm{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--d);}
-.fi{font-size:12px;color:#504030;line-height:1.8;text-align:right;}
+
+/* FOOTER */
+footer{background:#050402;border-top:1px solid rgba(201,168,76,.1);padding:48px 80px;}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:40px;margin-bottom:40px;}
+.fm{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--d);letter-spacing:1px;}
+.footer-tagline{font-size:12px;color:#504030;margin-top:8px;}
+.footer-links{display:flex;gap:48px;flex-wrap:wrap;}
+.footer-col h4{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--d);margin-bottom:16px;}
+.footer-col a{display:block;font-size:13px;color:#908070;text-decoration:none;margin-bottom:10px;transition:color .2s;}
+.footer-col a:hover{color:var(--d);}
+.footer-bottom{border-top:1px solid rgba(201,168,76,.05);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.footer-copy{font-size:11px;color:#302010;}
+.footer-privacy a{font-size:11px;color:#504030;text-decoration:none;}
+.footer-privacy a:hover{color:var(--d);}
+
+/* RESPONSIVE */
 @media(max-width:768px){
-nav{padding:20px 24px;}
+nav{padding:16px 24px;}
+.nav-links{display:none;}
+.nav-toggle{display:flex;}
 .hero-page{min-height:100vh;padding:60px 24px;}
 .content{padding:48px 24px;}
 .destaque{padding:24px;}
+.etapas{grid-template-columns:1fr;}
+.deps{grid-template-columns:1fr;}
+.outros-servicos{padding:60px 24px;}
+.outros-grid{grid-template-columns:1fr;}
 .cta-section{padding:60px 24px;}
-footer{padding:32px 24px;flex-direction:column;text-align:center;}
-.fi{text-align:center;}
+footer{padding:40px 24px;}
+.footer-top{flex-direction:column;}
+.footer-links{gap:32px;}
+.footer-bottom{flex-direction:column;text-align:center;}
 .waf,.wap{width:54px;height:54px;bottom:20px;right:20px;}
 }
 </style>
@@ -71,7 +157,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 <div class="wap"></div>
 <a href="https://wa.me/5511971162445?text=Ol%C3%A1%2C%20M%C3%A3e%20Milena%21%20Vi%20sobre%20o%20trabalho%20de%20amarração%20amorosa%20e%20gostaria%20de%20dar%20in%C3%ADcio%20ao%20meu%20atendimento." class="waf" target="_blank" rel="noopener"><svg width="32" height="32" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
-<nav><a href="/" class="nav-marca">Mãe Milena</a><a href="/" class="nav-back">← Voltar ao início</a></nav>
+
+<nav>
+  <a href="/" class="nav-marca">Mãe Milena</a>
+  <ul class="nav-links">
+    <li><a href="/amarracao-amorosa" class="ativo">Amarração Amorosa</a></li>
+    <li><a href="/uniao-de-casal">União de Casal</a></li>
+    <li><a href="/adocamento-amoroso">Adoçamento Amoroso</a></li>
+    <li><a href="/afastamento-de-rivais">Afastamento de Rivais</a></li>
+    <li><a href="/depoimentos">Depoimentos</a></li>
+    <li><a href="https://wa.me/5511971162445?text=Ol%C3%A1%2C%20M%C3%A3e%20Milena%21%20Vi%20sobre%20o%20trabalho%20de%20amarração%20amorosa%20e%20gostaria%20de%20dar%20in%C3%ADcio%20ao%20meu%20atendimento." target="_blank" rel="noopener" class="nav-wpp">Falar Agora</a></li>
+  </ul>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="nav-mobile" id="navMobile">
+  <button class="nav-mobile-fechar" id="navFechar" aria-label="Fechar menu">×</button>
+  <a href="/" >Início</a>
+  <a href="/amarracao-amorosa" class="ativo">Amarração Amorosa</a>
+  <a href="/uniao-de-casal">União de Casal</a>
+  <a href="/adocamento-amoroso">Adoçamento Amoroso</a>
+  <a href="/afastamento-de-rivais">Afastamento de Rivais</a>
+  <a href="/depoimentos">Depoimentos</a>
+  <a href="https://wa.me/5511971162445?text=Ol%C3%A1%2C%20M%C3%A3e%20Milena%21%20Vi%20sobre%20o%20trabalho%20de%20amarração%20amorosa%20e%20gostaria%20de%20dar%20in%C3%ADcio%20ao%20meu%20atendimento." target="_blank" rel="noopener" class="nav-wpp-mobile">Falar com Mãe Milena</a>
+</div>
+
 <section class="hero-page">
 <div class="hero-page-inner">
 <span class="page-label">Especialidade</span>
@@ -82,11 +194,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <p class="scroll-hint">↓ Saiba mais</p>
 </div>
 </section>
+
 <div class="content">
 <h2>O que é a amarração amorosa?</h2>
 <p>A amarração amorosa é um trabalho espiritual profundo que atua nos laços energéticos entre duas pessoas. Diferente do que muitos pensam, não se trata de manipulação — trata-se de despertar e fortalecer sentimentos que já existem, mas que foram bloqueados por mágoas, distâncias, influências externas ou energias negativas.</p>
 <p>Quando realizada por uma especialista experiente como Mãe Milena, a amarração respeita o livre arbítrio e trabalha para remover os obstáculos que impedem a reconexão natural entre dois seres que têm uma história juntos.</p>
 <div class="destaque"><p>"Não existe caso sem solução quando existe vontade verdadeira e trabalho espiritual sério. Em 25 anos, já vi situações que pareciam impossíveis se resolverem."</p></div>
+
 <h2>Quando a amarração amorosa é indicada?</h2>
 <ul class="lista">
 <li><span class="lista-dot"></span>Seu parceiro se afastou sem uma explicação clara</li>
@@ -95,16 +209,172 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <li><span class="lista-dot"></span>Sente que energias externas interferiram no seu relacionamento</li>
 <li><span class="lista-dot"></span>A pessoa amada está se afastando sem motivo aparente</li>
 <li><span class="lista-dot"></span>Já tentou conversar e não conseguiu resultado</li>
+<li><span class="lista-dot"></span>Existe uma terceira pessoa interferindo no relacionamento</li>
+<li><span class="lista-dot"></span>Sente que algo invisível está impedindo a reaproximação</li>
 </ul>
-<h2>Como funciona o atendimento?</h2>
-<p>O primeiro passo é uma conversa sigilosa via WhatsApp, onde você me conta sua situação com detalhes. A partir daí, analiso o caso espiritualmente e indico o trabalho mais adequado para a sua situação específica.</p>
-<p>Cada amarração é realizada de forma personalizada, levando em conta a história do casal, os bloqueios presentes e o objetivo desejado. Acompanho todo o processo e mantenho contato para atualizações.</p>
+
+<h2>Como é realizado o trabalho espiritual?</h2>
+<p>Cada trabalho de amarração amorosa é único e personalizado. Não existe uma fórmula genérica — o que funciona para um casal pode não ser o caminho certo para outro. Por isso, o processo começa sempre com uma escuta profunda da sua situação.</p>
+<p>A amarração trabalha com energias ancestrais da tradição espiritual, utilizando elementos específicos escolhidos de acordo com o perfil do casal e a natureza dos bloqueios presentes. O trabalho é realizado em etapas, com acompanhamento contínuo.</p>
+
+<div class="etapas">
+  <div class="etapa">
+    <span class="etapa-num">01</span>
+    <h3>Consulta Inicial</h3>
+    <p>Você relata sua situação via WhatsApp com total sigilo. Analiso o caso espiritualmente.</p>
+  </div>
+  <div class="etapa">
+    <span class="etapa-num">02</span>
+    <h3>Trabalho Personalizado</h3>
+    <p>Defino o trabalho mais adequado para o seu caso e inicio a execução com os elementos certos.</p>
+  </div>
+  <div class="etapa">
+    <span class="etapa-num">03</span>
+    <h3>Acompanhamento</h3>
+    <p>Mantenho contato durante todo o processo, com atualizações e orientações espirituais.</p>
+  </div>
 </div>
+
+<h2>O que esperar após o trabalho?</h2>
+<p>Os resultados de uma amarração amorosa variam conforme a intensidade dos bloqueios e a abertura energética das pessoas envolvidas. De modo geral, os primeiros sinais costumam aparecer entre alguns dias e algumas semanas após o início do trabalho.</p>
+<p>É comum que a pessoa amada comece a dar sinais espontâneos — mensagens, ligações, encontros casuais — antes mesmo de uma reaproximação direta. O processo respeita o tempo de cada caso, e por isso o acompanhamento contínuo é essencial.</p>
+<ul class="lista">
+<li><span class="lista-dot"></span>Reaproximação espontânea da pessoa amada</li>
+<li><span class="lista-dot"></span>Redução de conflitos e mágoas antigas</li>
+<li><span class="lista-dot"></span>Fortalecimento do vínculo afetivo e emocional</li>
+<li><span class="lista-dot"></span>Afastamento de influências negativas externas</li>
+<li><span class="lista-dot"></span>Maior harmonia e equilíbrio na relação</li>
+</ul>
+
+<h2>O que dizem quem já passou pelo atendimento</h2>
+<div class="deps">
+  <div class="dep">
+    <p class="dep-texto">Agora tudo volta para o caminho que é nosso. Muito obrigada por me guiar em todo o processo, Mãe Milena.</p>
+    <div class="dep-autor"><div class="dep-linha"></div><span class="dep-nome">Cliente atendida</span></div>
+  </div>
+  <div class="dep">
+    <p class="dep-texto">Cheguei em casa e ele estava lá, admitindo que pegou pesado. Não acreditei quando aconteceu, mas aconteceu.</p>
+    <div class="dep-autor"><div class="dep-linha"></div><span class="dep-nome">Cliente atendida</span></div>
+  </div>
+  <div class="dep">
+    <p class="dep-texto">Já tinha tentado de tudo. Foi a Mãe Milena que resolveu. O trabalho dela é sério e discreto do começo ao fim.</p>
+    <div class="dep-autor"><div class="dep-linha"></div><span class="dep-nome">Cliente atendida</span></div>
+  </div>
+</div>
+
+<h2>Perguntas frequentes</h2>
+<div class="faq">
+
+  <div class="faq-item">
+    <button class="faq-pergunta" aria-expanded="false">A amarração amorosa interfere no livre arbítrio da pessoa? <span class="faq-icone">+</span></button>
+    <div class="faq-resposta"><div class="faq-resposta-inner"><p>Não. O trabalho espiritual atua na remoção de bloqueios energéticos e no fortalecimento de sentimentos que já existem entre as duas pessoas. Não se trata de forçar algo que não existe — trata-se de desobstruir o caminho para que o amor genuíno possa fluir novamente.</p></div></div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-pergunta" aria-expanded="false">Em quanto tempo vejo resultados? <span class="faq-icone">+</span></button>
+    <div class="faq-resposta"><div class="faq-resposta-inner"><p>Os primeiros sinais costumam aparecer entre alguns dias e algumas semanas. Cada caso é único e depende da intensidade dos bloqueios presentes. Durante o processo, mantenho contato contínuo para acompanhar a evolução.</p></div></div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-pergunta" aria-expanded="false">O atendimento é realmente sigiloso? <span class="faq-icone">+</span></button>
+    <div class="faq-resposta"><div class="faq-resposta-inner"><p>Sim, absolutamente. Todo o atendimento é realizado de forma privada via WhatsApp. Nenhuma informação sua é compartilhada com terceiros. O sigilo é um princípio fundamental do meu trabalho há 25 anos.</p></div></div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-pergunta" aria-expanded="false">Funciona para qualquer tipo de situação amorosa? <span class="faq-icone">+</span></button>
+    <div class="faq-resposta"><div class="faq-resposta-inner"><p>O trabalho é indicado para situações onde existe ou existiu um vínculo afetivo real entre as pessoas. Durante a consulta inicial, avalio o caso para indicar o trabalho mais adequado — seja amarração, adoçamento, união ou afastamento de rivais.</p></div></div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-pergunta" aria-expanded="false">Como funciona o primeiro contato? <span class="faq-icone">+</span></button>
+    <div class="faq-resposta"><div class="faq-resposta-inner"><p>Basta me enviar uma mensagem via WhatsApp. Você me conta sua situação com os detalhes que se sentir confortável em compartilhar, e eu faço a análise espiritual do caso para indicar o caminho mais adequado.</p></div></div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-pergunta" aria-expanded="false">Posso fazer o trabalho mesmo morando longe? <span class="faq-icone">+</span></button>
+    <div class="faq-resposta"><div class="faq-resposta-inner"><p>Sim. Todo o atendimento é realizado à distância via WhatsApp, independente de onde você mora. A energia espiritual não tem fronteiras geográficas, e atendo clientes de todo o Brasil.</p></div></div>
+  </div>
+
+</div>
+</div>
+
+<section class="outros-servicos">
+  <div style="max-width:900px;margin:0 auto;text-align:center;">
+    <span style="font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--d);display:block;margin-bottom:16px;">Outros Trabalhos</span>
+    <h2 style="margin-top:0;">Conheça os demais atendimentos</h2>
+  </div>
+  <div class="outros-grid">
+    <a href="/uniao-de-casal" class="outro-card">
+      <h3>União de Casal</h3>
+      <p>Fortalecimento do vínculo espiritual para uma união duradoura.</p>
+      <span class="seta">Saiba mais →</span>
+    </a>
+    <a href="/adocamento-amoroso" class="outro-card">
+      <h3>Adoçamento Amoroso</h3>
+      <p>Suaviza mágoas e afasta energias negativas do relacionamento.</p>
+      <span class="seta">Saiba mais →</span>
+    </a>
+    <a href="/afastamento-de-rivais" class="outro-card">
+      <h3>Afastamento de Rivais</h3>
+      <p>Elimina a influência de terceiros que interferem na sua relação.</p>
+      <span class="seta">Saiba mais →</span>
+    </a>
+  </div>
+</section>
+
 <section class="cta-section"><div class="cta-inner">
 <h2>Pronta para dar o primeiro passo?</h2>
 <p class="cta-sub">Entre em contato agora via WhatsApp. O atendimento é sigiloso, personalizado e começa com uma conversa.</p>
 <a href="https://wa.me/5511971162445?text=Ol%C3%A1%2C%20M%C3%A3e%20Milena%21%20Vi%20sobre%20o%20trabalho%20de%20amarração%20amorosa%20e%20gostaria%20de%20dar%20in%C3%ADcio%20ao%20meu%20atendimento." class="btn" target="_blank" rel="noopener">Falar com Mãe Milena Agora</a>
 <p class="horario-hero" style="margin-top:16px;">Segunda a sábado · 9h às 20h · Atendimento via WhatsApp</p>
 </div></section>
-<footer><div class="fm">Mãe Milena</div><div class="fi">Atendimento espiritual sigiloso<br>Segunda a sábado · 9h às 20h</div></footer>
+
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="fm">Mãe Milena</div>
+      <p class="footer-tagline">Atendimento espiritual sigiloso<br>Segunda a sábado · 9h às 20h</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4>Serviços</h4>
+        <a href="/amarracao-amorosa">Amarração Amorosa</a>
+        <a href="/uniao-de-casal">União de Casal</a>
+        <a href="/adocamento-amoroso">Adoçamento Amoroso</a>
+        <a href="/afastamento-de-rivais">Afastamento de Rivais</a>
+      </div>
+      <div class="footer-col">
+        <h4>Informações</h4>
+        <a href="/depoimentos">Depoimentos</a>
+        <a href="/sobre">Sobre Mãe Milena</a>
+        <a href="https://wa.me/5511971162445?text=Ol%C3%A1%2C%20M%C3%A3e%20Milena%21%20Vi%20sobre%20o%20trabalho%20de%20amarração%20amorosa%20e%20gostaria%20de%20dar%20in%C3%ADcio%20ao%20meu%20atendimento." target="_blank" rel="noopener">Falar via WhatsApp</a>
+        <a href="/politica-de-privacidade">Política de Privacidade</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 Mãe Milena · Todos os direitos reservados</span>
+    <div class="footer-privacy"><a href="/politica-de-privacidade">Política de Privacidade</a></div>
+  </div>
+</footer>
+
+<script>
+// Menu hambúrguer mobile
+var toggle=document.getElementById('navToggle');
+var mobile=document.getElementById('navMobile');
+var fechar=document.getElementById('navFechar');
+toggle.addEventListener('click',function(){toggle.classList.toggle('aberto');mobile.classList.toggle('aberto');document.body.style.overflow=mobile.classList.contains('aberto')?'hidden':'';});
+fechar.addEventListener('click',function(){toggle.classList.remove('aberto');mobile.classList.remove('aberto');document.body.style.overflow='';});
+mobile.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){toggle.classList.remove('aberto');mobile.classList.remove('aberto');document.body.style.overflow='';});});
+
+// FAQ accordion
+document.querySelectorAll('.faq-pergunta').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var item=this.closest('.faq-item');
+    var aberto=item.classList.contains('aberto');
+    document.querySelectorAll('.faq-item').forEach(function(i){i.classList.remove('aberto');i.querySelector('.faq-pergunta').setAttribute('aria-expanded','false');});
+    if(!aberto){item.classList.add('aberto');this.setAttribute('aria-expanded','true');}
+  });
+});
+</script>
 </body></html>
