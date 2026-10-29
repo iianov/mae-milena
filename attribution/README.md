@@ -1,6 +1,6 @@
 # Referências de contatos — preparação
 
-Estado: serviço preparado, não implantado, não conectado ao site e sem importação para Google Ads. A conta nova é 424-178-5866. Não alteramos GTM, tags, botões ou campanhas.
+Estado em 29/10/2026: Worker implantado manualmente e teste sintético enviado pelo WhatsApp no iPhone. Coleta voltou a false. Integração da home preparada nesta branch, com data-enabled=false; sem importação para Google Ads. A conta nova é 424-178-5866. GTM e tags de anúncios preservados. A referência do teste não comprova atribuição a um anúncio real.
 
 ## Hospedagem separada
 
@@ -11,7 +11,7 @@ Não guardar GCLIDs em GitHub, código público, issues ou planilhas públicas. 
 ## Configuração necessária antes da integração
 
 1. Criar D1 `milena-referencias` e executar `schema.sql` no console desse banco.
-2. Criar o Worker usando `worker.mjs`, associar o D1 como `DB` e configurar o limitador como `REFERENCE_RATE_LIMITER` (10 solicitações/60 segundos por chave). Alternativamente, configurar o ID do D1 em `wrangler.jsonc` e implantar por Wrangler. O arquivo contém um marcador de posição, não é um deployment pronto.
+2. Criar o Worker usando `worker.mjs`, associar o D1 como `DB` e configurar o limitador como `REFERENCE_RATE_LIMITER` (10 solicitações/60 segundos por chave). Alternativamente, configurar o ID do D1 em `wrangler.jsonc` e implantar por Wrangler. O ID do banco já está preenchido. Implantar este arquivo mantém COLLECTION_ENABLED=false.
 3. Manter `COLLECTION_ENABLED=false` até validar a implantação, a privacidade e o fluxo de consentimento. Não alterar para true simplesmente para passar um teste.
 4. Configurar execução diária de `scheduled` para remover registros expirados. Os registros expiram em 90 dias e a limpeza diária remove os vencidos. Considerar separadamente os prazos de backups e registros do provedor.
 5. Testar com dados sintéticos. Verificar persistência, limitação e acesso exclusivo do responsável ao D1.
@@ -37,3 +37,15 @@ Somente após validar origem e marcos reais, criar/testar a ação offline inici
 `node --test attribution/worker.test.mjs`
 
 Os testes cobrem as proteções antes de acessar o banco. A persistência em D1 e o fluxo móvel completo precisam ser verificados após implantação; não são comprovados por esses testes.
+
+## Cliente da home preparado, ainda desligado
+
+`assets/whatsapp-reference.js` retorna imediatamente quando `data-enabled` não é `true`. A home nesta branch o carrega com `false`. Não há captura, armazenamento ou aviso novo enquanto desligado.
+
+Quando ativado, lê apenas GCLID da URL ou estado consentido da mesma aba por até 24h. O aviso opcional aparece no rodapé para autorizar ou recusar; quem não autoriza segue sem referência. UUID e GCLID só são guardados na sessão e enviados após autorização real. Não captura parâmetros de navegação adicionais. Links preservam destino wa.me, número, texto original e atributos. Não intercepta cliques nem modifica GTM/dataLayer. Uma resposta tardia após revogação não decora os links.
+
+Limites: apenas home; páginas de serviços ainda não carregam o cliente. Quem clicar antes de a referência ficar pronta, não autorizar, remover o texto ou não tiver GCLID ficará sem atribuição por este mecanismo. Não há recuperação de mensagens pelo WhatsApp/API. Recusar retira referência dos próximos links, mas não apaga registro existente no D1. O aviso rege apenas esta nova referência; não é um gerenciador de consentimento para as tags antigas.
+
+Antes de ativar: revisar o aviso e a política para refletir coleta real; testar o cliente no navegador; confirmar codificação automática e elegibilidade do método de importação; definir marcos e rotina privada para ligar referências às mensagens recebidas. Nenhum dado é enviado ao Google por este cliente.
+
+Teste do cliente: `node --test attribution/client.test.mjs`.
