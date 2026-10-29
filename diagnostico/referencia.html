@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>Teste de referência — Mãe Milena</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f5f4f0; color: #242b28; font: 17px/1.6 system-ui, sans-serif; }
+    main { max-width: 640px; margin: 40px auto; padding: 28px; background: white; border-radius: 16px; }
+    h1 { font-size: 26px; line-height: 1.3; }
+    label { display: block; margin: 24px 0; }
+    input { width: 20px; height: 20px; vertical-align: middle; }
+    button, .button { display: inline-block; padding: 14px 20px; background: #18573f; color: white; border: 0; border-radius: 8px; font: inherit; text-decoration: none; cursor: pointer; }
+    [hidden] { display: none !important; }
+    button:disabled { opacity: .5; cursor: default; }
+    #status { overflow-wrap: anywhere; }
+    .note { color: #535e58; font-size: 15px; }
+    @media (max-width: 680px) { main { margin: 16px; padding: 24px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="note">Diagnóstico separado da página de anúncios</p>
+    <h1>Testar a referência no WhatsApp</h1>
+    <p>Este teste usa um identificador fictício. Não mede conversões, não carrega tags de anúncios e não envia dados ao Google.</p>
+    <label><input id="authorize" type="checkbox"> Autorizo criar um registro de teste com identificador fictício no banco de referências.</label>
+    <button id="generate" type="button" disabled>1. Gerar referência de teste</button>
+    <p id="status" role="status" aria-live="polite">Nenhum registro criado.</p>
+    <a id="whatsapp" class="button" hidden target="_blank" rel="noopener noreferrer">2. Abrir WhatsApp com a referência</a>
+    <p class="note">Ao abrir o WhatsApp, confira a referência no texto e toque em Enviar. Abrir o aplicativo não envia a mensagem automaticamente.</p>
+    <p class="note">A página não lê parâmetros da URL, não grava cookies e não guarda identificadores no navegador. O registro fictício fica no banco por até 90 dias, salvo exclusão manual.</p>
+    <p><a href="/">Voltar ao site</a></p>
+  </main>
+  <script>
+    'use strict';
+    const endpoint = 'https://milena-referencias.ianov-igor.workers.dev/references';
+    const authorize = document.getElementById('authorize');
+    const generate = document.getElementById('generate');
+    const status = document.getElementById('status');
+    const whatsapp = document.getElementById('whatsapp');
+    let requestId;
+    let reference;
+    let busy = false;
+    // O mesmo UUID é reutilizado após falhas para não duplicar o registro.
+    authorize.addEventListener('change', () => {
+      generate.disabled = !authorize.checked || busy;
+      whatsapp.hidden = !authorize.checked || !reference;
+    });
+    generate.addEventListener('click', async () => {
+      if (!authorize.checked || busy) return;
+      busy = true;
+      generate.disabled = true;
+      status.textContent = 'Criando registro fictício…';
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+      try {
+        requestId ||= crypto.randomUUID();
+        const response = await fetch(endpoint, {
+          method: 'POST', credentials: 'omit', cache: 'no-store',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
+          body: JSON.stringify({ request_id: requestId, gclid: 'TEST_ONLY_BROWSER_NO_AD_CLICK', consent: true })
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          if (data.error === 'collection_not_configured') throw new Error('O serviço está desligado. Ative COLLECTION_ENABLED para este teste.');
+          if (response.status === 429) throw new Error('Limite de testes atingido. Aguarde um minuto e tente novamente.');
+          throw new Error('O serviço recusou o teste (HTTP ' + response.status + ').');
+        }
+        if (typeof data.reference !== 'string' || !/^MM-[A-F0-9]{24}$/.test(data.reference)) throw new Error('O serviço retornou uma referência inválida.');
+        reference = data.reference;
+        const url = new URL('https://wa.me/5511971162445');
+        url.searchParams.set('text', 'TESTE TÉCNICO — não é um novo cliente.\nReferência: ' + reference);
+        whatsapp.href = url.href;
+        whatsapp.hidden = !authorize.checked;
+        status.textContent = 'Referência criada: ' + reference;
+        generate.textContent = 'Conferir a mesma referência';
+      } catch (error) {
+        status.textContent = error.name === 'AbortError' ? 'O serviço demorou a responder. Tente novamente.' : (error instanceof TypeError ? 'Não foi possível conectar ao serviço. Confira a conexão e tente novamente.' : error.message);
+      } finally {
+        clearTimeout(timeout);
+        busy = false;
+        generate.disabled = !authorize.checked;
+      }
+    });
+  </script>
+</body>
+</html>
