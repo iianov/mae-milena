@@ -4,16 +4,21 @@
   if (document.currentScript?.dataset.enabled !== 'true') return;
   const endpoint = 'https://milena-referencias.ianov-igor.workers.dev/references';
   const testMode = document.currentScript?.dataset.testMode === 'true' && location.pathname === '/diagnostico/integracao.html';
+  const source = 'ads4241785866';
+  const params = new URL(location.href).searchParams;
   const key = testMode ? 'mm_reference_test_v1' : 'mm_reference_v1';
   const validClick = value => typeof value === 'string' && /^[A-Za-z0-9_-]{1,1024}$/.test(value);
   const validRef = value => typeof value === 'string' && /^MM-[A-F0-9]{24}$/.test(value);
   const validId = value => typeof value === 'string' && /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(value);
   let saved;
   try { saved = JSON.parse(sessionStorage.getItem(key)); } catch { /* Armazenamento opcional. */ }
-  const incoming = testMode ? 'TEST_ONLY_INTEGRATION_NO_AD_CLICK' : new URL(location.href).searchParams.get('gclid');
+  const incoming = testMode ? 'TEST_ONLY_INTEGRATION_NO_AD_CLICK' : params.get('gclid');
   const reusable = saved?.consent === true && validClick(saved.gclid) && validId(saved.request_id) &&
+    saved.source === source &&
     Number.isFinite(saved.expires) && saved.expires > Date.now() && saved.expires <= Date.now() + 86400000 &&
     (!incoming || incoming === saved.gclid);
+  // O marcador será incluído somente na URL da campanha nova. Não é autenticação.
+  if (!testMode && params.get('mm_source') !== source && (incoming || !reusable || params.has('mm_source'))) return;
   const gclid = validClick(incoming) ? incoming : (!incoming && reusable ? saved.gclid : null);
   if (!gclid) return;
   let state = reusable ? saved : null;
@@ -54,7 +59,9 @@
   const note = document.createElement('p');
   note.setAttribute('role', 'status'); note.style.marginTop = '12px';
   panel.append(text, policy, actions, note);
-  document.querySelector('footer')?.prepend(panel);
+  const hero = document.querySelector('.hero');
+  if (hero) hero.after(panel);
+  else document.querySelector('footer')?.prepend(panel);
   const render = () => {
     accept.textContent = allowed ? 'Tentar preparar referência' : 'Autorizar referência';
     accept.hidden = allowed && validRef(state?.reference);
@@ -88,7 +95,7 @@
   };
   accept.addEventListener('click', () => {
     if (!allowed) {
-      state = {consent: true, gclid, request_id: crypto.randomUUID(), expires: Date.now() + 86400000};
+      state = {consent: true, source, gclid, request_id: crypto.randomUUID(), expires: Date.now() + 86400000};
       allowed = true; generation++; persist();
     }
     render(); prepare();
