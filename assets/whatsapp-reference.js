@@ -3,13 +3,14 @@
   'use strict';
   if (document.currentScript?.dataset.enabled !== 'true') return;
   const endpoint = 'https://milena-referencias.ianov-igor.workers.dev/references';
-  const key = 'mm_reference_v1';
+  const testMode = document.currentScript?.dataset.testMode === 'true' && location.pathname === '/diagnostico/integracao.html';
+  const key = testMode ? 'mm_reference_test_v1' : 'mm_reference_v1';
   const validClick = value => typeof value === 'string' && /^[A-Za-z0-9_-]{1,1024}$/.test(value);
   const validRef = value => typeof value === 'string' && /^MM-[A-F0-9]{24}$/.test(value);
   const validId = value => typeof value === 'string' && /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(value);
   let saved;
   try { saved = JSON.parse(sessionStorage.getItem(key)); } catch { /* Armazenamento opcional. */ }
-  const incoming = new URL(location.href).searchParams.get('gclid');
+  const incoming = testMode ? 'TEST_ONLY_INTEGRATION_NO_AD_CLICK' : new URL(location.href).searchParams.get('gclid');
   const reusable = saved?.consent === true && validClick(saved.gclid) && validId(saved.request_id) &&
     Number.isFinite(saved.expires) && saved.expires > Date.now() && saved.expires <= Date.now() + 86400000 &&
     (!incoming || incoming === saved.gclid);
@@ -35,6 +36,7 @@
   panel.style.cssText = 'margin:24px auto;padding:20px;max-width:900px;background:#17130c;color:#f5efe6;border:1px solid #c9a84c;font:16px/1.6 Lato,sans-serif;';
   const text = document.createElement('p');
   text.textContent = 'Podemos guardar o identificador do anúncio por até 90 dias e incluir uma referência na mensagem do WhatsApp para relacionar a origem ao atendimento? A conversa não é lida pelo site. Você pode continuar sem autorizar.';
+  if (testMode) text.textContent = 'TESTE: autoriza guardar um identificador fictício no banco e uma referência nesta aba por até 24 horas? O registro no banco dura até 90 dias, salvo exclusão manual. Nenhum dado será enviado ao Google.';
   const policy = document.createElement('a');
   policy.href = '/politica-de-privacidade';
   policy.textContent = 'Política de Privacidade';
@@ -77,7 +79,7 @@
         if (!validRef(result.reference)) throw new Error('invalid_reference');
         if (!allowed || version !== generation) return;
         state.reference = result.reference; persist(); decorate(result.reference);
-        note.textContent = 'Referência pronta. Ela será incluída no texto do WhatsApp.';
+        note.textContent = 'Referência pronta: ' + result.reference + '. Ela será incluída no texto do WhatsApp.';
       } catch {
         if (allowed && version === generation) note.textContent = 'Referência indisponível. Você pode falar pelo WhatsApp normalmente ou tentar novamente aqui.';
       } finally { clearTimeout(timeout); pending = null; render(); }

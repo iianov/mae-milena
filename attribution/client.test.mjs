@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 const source = readFileSync(new URL('../assets/whatsapp-reference.js', import.meta.url), 'utf8');
 const ref = 'MM-1234567890ABCDEF12345678';
-function setup({enabled = true, gclid = 'real_click_example', fail = false, delayed = false} = {}) {
+function setup({enabled = true, gclid = 'real_click_example', fail = false, delayed = false, testMode = false, pathname = '/'} = {}) {
   const nodes = [];
   const make = () => {
     const node = {children: [], dataset: {}, style: {}, attributes: {}, hidden: false,
@@ -19,9 +19,9 @@ function setup({enabled = true, gclid = 'real_click_example', fail = false, dela
   });
   const footer = make();
   const requests = []; const memory = new Map(); let release;
-  const context = {document: {currentScript: {dataset: {enabled: String(enabled)}},
+  const context = {document: {currentScript: {dataset: {enabled: String(enabled), testMode: String(testMode)}},
     querySelectorAll: () => links, querySelector: () => footer, createElement: make},
-    location: {href: 'https://maemilenaamarracao.com.br/' + (gclid ? '?gclid=' + gclid : '')},
+    location: {pathname, href: 'https://maemilenaamarracao.com.br' + pathname + (gclid ? '?gclid=' + gclid : '')},
     sessionStorage: {getItem: key => memory.get(key) || null, setItem: (key, value) => memory.set(key, value), removeItem: key => memory.delete(key)},
     crypto: globalThis.crypto, URL, AbortController, setTimeout, clearTimeout,
     fetch: async (url, options) => {
@@ -64,4 +64,11 @@ test('failed request keeps contact available; retry reuses UUID', async () => {
 test('response after withdrawal cannot add a reference or restore storage', async () => {
   const s = setup({delayed: true}); s.buttons[0].click(); s.buttons[1].click(); s.release(); await flush();
   assert.equal(s.memory.size, 0); assert(s.links.every(link => link.getAttribute('href') === link.href));
+});
+test('diagnostic mode ignores real URL identifiers and uses separate storage', async () => {
+  const s = setup({testMode: true, pathname: '/diagnostico/integracao.html'});
+  s.buttons[0].click(); await flush();
+  assert.equal(s.requests[0].data.gclid, 'TEST_ONLY_INTEGRATION_NO_AD_CLICK');
+  assert.equal(s.memory.has('mm_reference_v1'), false);
+  assert.equal(s.memory.has('mm_reference_test_v1'), true);
 });
