@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 const clientCode = readFileSync(new URL('../assets/whatsapp-reference.js', import.meta.url), 'utf8');
 const ref = 'MM-1234567890ABCDEF12345678';
-function setup({enabled = true, gclid = 'real_click_example', fail = false, delayed = false, testMode = false, pathname = '/', source = 'ads4241785866'} = {}) {
+function setup({enabled = true, gclid = 'real_click_example', fail = false, delayed = false, testMode = false, pathname = '/', source = 'ads4241785866', memory = new Map()} = {}) {
   const nodes = [];
   const make = () => {
     const node = {children: [], dataset: {}, style: {}, attributes: {}, hidden: false,
@@ -18,7 +18,7 @@ function setup({enabled = true, gclid = 'real_click_example', fail = false, dela
     link.attributes.href = link.href; return link;
   });
   const footer = make();
-  const requests = []; const memory = new Map(); let release;
+  const requests = []; let release;
   const context = {document: {currentScript: {dataset: {enabled: String(enabled), testMode: String(testMode)}},
     querySelectorAll: () => links, querySelector: selector => selector === 'footer' ? footer : null, createElement: make},
     location: {pathname, href: 'https://maemilenaamarracao.com.br' + pathname + '?mm_source=' + source + (gclid ? '&gclid=' + gclid : '')},
@@ -40,37 +40,41 @@ test('disabled client does nothing even with GCLID', () => {
 test('organic visit does not create an attribution reference', () => {
   const s = setup({gclid: ''}); assert.equal(s.buttons.length, 0); assert.equal(s.requests.length, 0);
 });
-test('requires explicit authorization and leaves original links on refusal', () => {
-  const s = setup(); assert.equal(s.requests.length, 0); assert.equal(s.memory.size, 0);
-  s.buttons[1].click(); assert.equal(s.requests.length, 0);
-  assert(s.links.every(link => !link.getAttribute('href').includes('Ref.')));
-});
-test('one authorized request decorates all four links; original text and target survive', async () => {
-  const s = setup(); s.buttons[0].click(); s.buttons[0].click(); await flush();
-  assert.equal(s.requests.length, 1); assert.equal(s.requests[0].data.consent, true);
-  assert.equal(s.requests[0].data.gclid, 'real_click_example');
+test('automatically decorates all four links without a consent field or interface', async () => {
+  const s = setup(); await flush();
+  assert.equal(s.buttons.length, 0); assert.equal(s.footer.children.length, 0);
+  assert.equal(s.requests.length, 1);
+  assert.deepEqual(Object.keys(s.requests[0].data).sort(), ['gclid', 'request_id']);
   for (const link of s.links) {
-    const url = new URL(link.getAttribute('href')); assert.equal(url.origin, 'https://wa.me');
-    assert.equal(url.pathname, '/5511971162445'); assert.equal(url.searchParams.get('text'), 'Olá\nRef. ' + ref);
+    const url = new URL(link.getAttribute('href'));
+    assert.equal(url.origin, 'https://wa.me'); assert.equal(url.pathname, '/5511971162445');
+    assert.equal(url.searchParams.get('text'), 'Olá\nRef. ' + ref);
   }
-  s.buttons[1].click(); assert.equal(s.memory.size, 0);
-  assert(s.links.every(link => link.getAttribute('href') === link.href));
 });
-test('failed request keeps contact available; retry reuses UUID', async () => {
-  const s = setup({fail: true}); s.buttons[0].click(); await flush(); s.buttons[0].click(); await flush();
-  assert.equal(s.requests[0].data.request_id, s.requests[1].data.request_id);
+test('failed request keeps links unchanged and reload reuses the same UUID', async () => {
+  const s = setup({fail: true}); await flush();
   assert(s.links.every(link => link.getAttribute('href') === link.href));
+  const retry = setup({memory: s.memory}); await flush();
+  assert.equal(s.requests[0].data.request_id, retry.requests[0].data.request_id);
 });
-test('response after withdrawal cannot add a reference or restore storage', async () => {
-  const s = setup({delayed: true}); s.buttons[0].click(); s.buttons[1].click(); s.release(); await flush();
-  assert.equal(s.memory.size, 0); assert(s.links.every(link => link.getAttribute('href') === link.href));
+test('reloading a completed attempt reuses reference without another network request', async () => {
+  const s = setup(); await flush();
+  const reload = setup({memory: s.memory}); await flush();
+  assert.equal(reload.requests.length, 0);
+  assert(reload.links.every(link => new URL(link.getAttribute('href')).searchParams.get('text') === 'Olá\nRef. ' + ref));
+});
+test('pending request does not alter or block WhatsApp links', async () => {
+  const s = setup({delayed: true});
+  assert(s.links.every(link => link.getAttribute('href') === link.href));
+  assert(s.links.every(link => !link.click));
+  s.release(); await flush();
+  assert(s.links.every(link => link.getAttribute('href') !== link.href));
 });
 test('diagnostic mode ignores real URL identifiers and uses separate storage', async () => {
-  const s = setup({testMode: true, pathname: '/diagnostico/integracao.html'});
-  s.buttons[0].click(); await flush();
+  const s = setup({testMode: true, pathname: '/diagnostico/integracao.html'}); await flush();
   assert.equal(s.requests[0].data.gclid, 'TEST_ONLY_INTEGRATION_NO_AD_CLICK');
-  assert.equal(s.memory.has('mm_reference_v1'), false);
-  assert.equal(s.memory.has('mm_reference_test_v1'), true);
+  assert.equal(s.memory.has('mm_reference_v2'), false);
+  assert.equal(s.memory.has('mm_reference_test_v2'), true);
 });
 test('untagged or other-account ad clicks do not start the new capture', () => {
   for (const source of ['', 'old_account']) {

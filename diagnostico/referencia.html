@@ -26,8 +26,7 @@
     <p class="note">Diagnóstico separado da página de anúncios</p>
     <h1>Testar a referência no WhatsApp</h1>
     <p>Este teste usa um identificador fictício. Não mede conversões, não carrega tags de anúncios e não envia dados ao Google.</p>
-    <label><input id="authorize" type="checkbox"> Autorizo criar um registro de teste com identificador fictício no banco de referências.</label>
-    <button id="generate" type="button" disabled>1. Gerar referência de teste</button>
+    <button id="generate" type="button">1. Gerar referência de teste</button>
     <p id="status" role="status" aria-live="polite">Nenhum registro criado.</p>
     <a id="whatsapp" class="button" hidden target="_blank" rel="noopener noreferrer">2. Abrir WhatsApp com a referência</a>
     <p class="note">Ao abrir o WhatsApp, confira a referência no texto e toque em Enviar. Abrir o aplicativo não envia a mensagem automaticamente.</p>
@@ -37,7 +36,6 @@
   <script>
     'use strict';
     const endpoint = 'https://milena-referencias.ianov-igor.workers.dev/references';
-    const authorize = document.getElementById('authorize');
     const generate = document.getElementById('generate');
     const status = document.getElementById('status');
     const whatsapp = document.getElementById('whatsapp');
@@ -45,12 +43,8 @@
     let reference;
     let busy = false;
     // O mesmo UUID é reutilizado após falhas para não duplicar o registro.
-    authorize.addEventListener('change', () => {
-      generate.disabled = !authorize.checked || busy;
-      whatsapp.hidden = !authorize.checked || !reference;
-    });
     generate.addEventListener('click', async () => {
-      if (!authorize.checked || busy) return;
+      if (busy) return;
       busy = true;
       generate.disabled = true;
       status.textContent = 'Criando registro fictício…';
@@ -62,7 +56,7 @@
           method: 'POST', credentials: 'omit', cache: 'no-store',
           headers: { 'Content-Type': 'application/json' },
           signal: controller.signal,
-          body: JSON.stringify({ request_id: requestId, gclid: 'TEST_ONLY_BROWSER_NO_AD_CLICK', consent: true })
+          body: JSON.stringify({ request_id: requestId, gclid: 'TEST_ONLY_BROWSER_NO_AD_CLICK' })
         });
         const data = await response.json();
         if (!response.ok) {
@@ -75,7 +69,7 @@
         const url = new URL('https://wa.me/5511971162445');
         url.searchParams.set('text', 'TESTE TÉCNICO — não é um novo cliente.\nReferência: ' + reference);
         whatsapp.href = url.href;
-        whatsapp.hidden = !authorize.checked;
+        whatsapp.hidden = false;
         status.textContent = 'Referência criada: ' + reference;
         generate.textContent = 'Conferir a mesma referência';
       } catch (error) {
@@ -83,7 +77,7 @@
       } finally {
         clearTimeout(timeout);
         busy = false;
-        generate.disabled = !authorize.checked;
+        generate.disabled = false;
       }
     });
   </script>

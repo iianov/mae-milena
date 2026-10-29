@@ -24,7 +24,7 @@ export default {
       } });
     }
     if (request.method !== 'POST') return reply(405, { error: 'method_not_allowed' }, origin);
-    // Falha fechada: a coleta só pode ser ativada após validar privacidade e consentimento.
+    // Falha fechada: a coleta depende da configuração explícita do responsável.
     if (env.COLLECTION_ENABLED !== 'true' || !env.DB || !env.REFERENCE_RATE_LIMITER) {
       return reply(503, { error: 'collection_not_configured' }, origin);
     }
@@ -53,9 +53,9 @@ export default {
       try { data = JSON.parse(new TextDecoder().decode(bytes)); }
       catch { return reply(400, { error: 'invalid_json' }, origin); }
       if (!data || typeof data !== 'object' || Array.isArray(data) ||
-        Object.keys(data).some(key => !['request_id', 'gclid', 'consent'].includes(key)) ||
+        Object.keys(data).some(key => !['request_id', 'gclid'].includes(key)) ||
         typeof data.request_id !== 'string' || !/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(data.request_id) ||
-        typeof data.gclid !== 'string' || !/^[A-Za-z0-9_-]{1,1024}$/.test(data.gclid) || data.consent !== true) {
+        typeof data.gclid !== 'string' || !/^[A-Za-z0-9_-]{1,1024}$/.test(data.gclid)) {
         return reply(400, { error: 'invalid_fields' }, origin);
       }
       const now = Math.floor(Date.now() / 1000);

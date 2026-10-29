@@ -15,10 +15,10 @@
 <h1>Teste da integração dos quatro botões</h1>
 <p>Esta página usa o mesmo componente preparado para o site, com um identificador fictício e separado dos visitantes. Não carrega GTM nem tags de anúncios.</p>
 <ol>
-<li>Na caixa abaixo dos botões, toque em <strong>Autorizar referência</strong> e aguarde a confirmação.</li>
+<li>Aguarde alguns segundos para a criação automática da referência fictícia.</li>
 <li>Toque em <strong>Conferir os quatro botões</strong>. Todos devem ter a mesma referência.</li>
 <li>Abra um dos botões do WhatsApp e envie a mensagem de teste.</li>
-<li>Volte à página, retire a autorização e confira novamente: todos devem ficar sem referência.</li>
+<li>Recarregue a página e confira: a referência deve permanecer a mesma nesta aba.</li>
 </ol>
 <nav aria-label="Botões do teste">
 <a class="button" href="https://wa.me/5511971162445?text=TESTE%20T%C3%89CNICO%20%E2%80%94%20bot%C3%A3o%20principal%2C%20n%C3%A3o%20%C3%A9%20um%20novo%20cliente." target="_blank" rel="noopener noreferrer">WhatsApp — botão principal</a>
@@ -29,8 +29,8 @@
 <button id="verify" type="button">Conferir os quatro botões</button>
 <p id="check" role="status" aria-live="polite">Aguardando conferência.</p>
 </main>
-<footer aria-label="Autorização do teste"></footer>
-<script src="/assets/whatsapp-reference.js" data-enabled="true" data-test-mode="true"></script>
+<footer>Teste automático sem caixa de autorização.</footer>
+<script src="/assets/whatsapp-reference.js?v=20261029-3" data-enabled="true" data-test-mode="true"></script>
 <script>
 document.getElementById('verify').addEventListener('click', () => {
   const values = [...document.querySelectorAll('nav a')].map(link => {

@@ -20,7 +20,7 @@ function environment() {
 function request(data = {}, headers = {}) {
   return new Request('https://example.workers.dev/references', {
     method: 'POST', headers: { Origin: origin, 'Content-Type': 'application/json', 'CF-Connecting-IP': '192.0.2.1', ...headers },
-    body: JSON.stringify({ request_id: '11111111-1111-4111-8111-111111111111', gclid: 'TEST_ONLY_123', consent: true, ...data }),
+    body: JSON.stringify({ request_id: '11111111-1111-4111-8111-111111111111', gclid: 'TEST_ONLY_123', ...data }),
   });
 }
 
@@ -36,9 +36,9 @@ test('não permite ler registros nem requisições de outra origem', async () =>
   assert.equal((await worker.fetch(new Request('https://example.workers.dev/references', { headers: { Origin: origin } }), env)).status, 405);
   assert.equal(env.sqlite.prepare('SELECT count(*) AS n FROM ad_references').get().n, 0);
 });
-test('não aceita texto do atendimento, falta de consentimento ou corpo excessivo', async () => {
+test('não aceita texto do atendimento, declaração de consentimento não coletado ou corpo excessivo', async () => {
   const env = environment();
-  for (const data of [{ message: 'private' }, { consent: false }, { gclid: "x'; DROP TABLE ad_references;--" }]) {
+  for (const data of [{ message: 'private' }, { consent: false }, { consent: true }, { gclid: "x'; DROP TABLE ad_references;--" }]) {
     assert.equal((await worker.fetch(request(data), env)).status, 400);
   }
   assert.equal((await worker.fetch(request({ gclid: 'X'.repeat(3000) }), env)).status, 413);

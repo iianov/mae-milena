@@ -1,53 +1,35 @@
-# Referências de contatos — preparação
+# Referências de atendimento — 29/10/2026
 
-Estado em 29/10/2026: Worker implantado manualmente; envio sintético confirmado no WhatsApp e vínculo confirmado no D1. Quatro links e retirada de autorização conferidos pelo responsável no navegador. Cliente da home habilitado, mas condicionado a GCLID, marcador mm_source=ads4241785866 e autorização. Nenhuma campanha nova lançada e nenhuma importação para Google Ads ativada. A conta nova é 424-178-5866; ações de contato qualificado e venda criadas como secundárias. GTM e tags existentes preservados. Testes sintéticos não comprovam atribuição a um anúncio real.
+Conta nova: 424-178-5866. Site no GitHub Pages; Worker e D1 na Cloudflare. Nenhuma campanha nova lançada e nenhuma importação para Google Ads ativada. Ações de contato qualificado e venda são secundárias. GTM e tags existentes preservados.
 
-## Hospedagem separada
+## Atualização sem caixa de autorização
 
-O site permanece no GitHub Pages. Um Cloudflare Worker em seu próprio endereço workers.dev receberá somente identificador do clique, UUID da tentativa e confirmação do consentimento aplicável. O banco D1 deve ficar na conta Cloudflare do responsável. Não é necessário transferir domínio ou DNS.
+Por solicitação do responsável, o cliente cria a referência automaticamente, sem interface de autorização. Não envia nem registra consentimento. A adequação da coleta sem consentimento permanece pendente; esta implementação não certifica base legal nem elegibilidade para importação no Google Ads.
 
-Não guardar GCLIDs em GitHub, código público, issues ou planilhas públicas. O endpoint só retorna uma referência aleatória; não existe rota pública de consulta, listagem, exportação ou atualização. Consulta inicial será pelo painel D1 autenticado da Cloudflare. Não há coleta de telefone, nome, conversa, situação afetiva ou informação religiosa. Origem/CORS não autenticam visitantes nem impedem requisições forjadas; o limitador reduz abuso, mas não identifica fraude de anúncios.
+**Implantação pendente na Cloudflare:** substituir o código do Worker por `worker.mjs` e publicar. O código anterior exigia `consent:true` e recusará o novo formato. Até publicar o Worker atualizado, tentativas novas ficam sem referência; o atendimento pelo WhatsApp continua funcionando. Não restaurar um consentimento fictício para contornar a validação. Não é necessário mudar o banco ou os bindings.
 
-## Configuração necessária antes da integração
+O site carrega `assets/whatsapp-reference.js?v=20261029-3`. A captura exige `data-enabled=true`, GCLID e marcador `mm_source=ads4241785866`, ou estado válido da mesma aba. Adicionar esse marcador somente ao sufixo de URL final da campanha nova. O marcador separa operacionalmente campanhas; não autentica nem comprova origem na conta. Sem GCLID não inventamos um identificador.
 
-1. Criar D1 `milena-referencias` e executar `schema.sql` no console desse banco.
-2. Criar o Worker usando `worker.mjs`, associar o D1 como `DB` e configurar o limitador como `REFERENCE_RATE_LIMITER` (10 solicitações/60 segundos por chave). Alternativamente, configurar o ID do D1 em `wrangler.jsonc` e implantar por Wrangler. O ID do banco já está preenchido. Implantar este arquivo mantém COLLECTION_ENABLED=false.
-3. Manter `COLLECTION_ENABLED=false` até validar a implantação, a privacidade e o fluxo de consentimento. Não alterar para true simplesmente para passar um teste.
-4. Configurar execução diária de `scheduled` para remover registros expirados. Os registros expiram em 90 dias e a limpeza diária remove os vencidos. Considerar separadamente os prazos de backups e registros do provedor.
-5. Testar com dados sintéticos. Verificar persistência, limitação e acesso exclusivo do responsável ao D1.
+O cliente guarda UUID, GCLID e referência na sessão da aba por até 24h. Reutiliza UUID após falhas e referência pronta após recarregar. O serviço recebe somente UUID e GCLID e retorna referência aleatória de 96 bits. Quatro links preservam destino wa.me, número, saudação original e atributos. Não intercepta cliques, espera rede para abrir o WhatsApp ou modifica GTM/dataLayer. Falhas e cliques antes da resposta mantêm contato direto sem referência.
 
-## Integração de página ainda pendente
+## Infraestrutura
 
-- Ativar codificação automática da conta de anúncios e capturar GCLID quando existir. Nunca inventar um identificador nem tratar visita orgânica como clique de anúncio. Verificar outros identificadores aplicáveis antes de cobrir tráfego que não contenha GCLID.
-- Só enviar dados após o consentimento exigido e o aviso adequado; `consent:true` deve representar uma decisão real do visitante, não um valor fixo colocado pelo desenvolvedor.
-- Criar/reutilizar UUID de tentativa no navegador; registrar referência antes de acrescentá-la ao texto do WhatsApp. Guardar o vínculo duravelmente no D1, não só no navegador.
-- A referência é opaca e não contém o GCLID. Ela deverá aparecer no texto preenchido como `Ref. MM-...`. Se o cliente a apagar, a associação poderá ser perdida.
-- Falha, indisponibilidade ou recusa de consentimento jamais devem impedir o atendimento: abrir o WhatsApp original sem referência. Não substituir o destino por um redirecionador que deixe de corresponder ao acionador atual de GTM.
-- Só classificar mensagem recebida após vê-la no WhatsApp. Clique, referência criada e texto preenchido não provam envio de mensagem.
-- O operador registra os marcos: mensagem recebida, orçamento enviado, interesse após orçamento e pagamento. Não inferir interesse somente pelo envio do orçamento.
+Worker `milena-referencias`, endpoint `https://milena-referencias.ianov-igor.workers.dev/references`. D1 vinculado como `DB`; limitador `REFERENCE_RATE_LIMITER`, 10 solicitações/60 segundos. Variável manual `COLLECTION_ENABLED=true`. O arquivo Wrangler conserva false para evitar ativação acidental em outra implantação.
 
-## Google Ads ainda pendente
+Tabela e índice em `schema.sql`. Registros expiram em 90 dias, com remoção diária pelo cron `17 3 * * *` UTC. Backups do provedor podem ter retenção adicional. IP usado apenas no limitador, sem gravação na tabela. Observabilidade desligada. Não há rota pública de leitura, consulta ou exportação. Acesso ao D1 pelo painel autenticado. Origem/CORS e limitador não impedem toda requisição forjada nem detectam fraude de anúncios.
 
-Validar elegibilidade da importação por GCLID para este serviço e as condições aplicáveis antes de aceitar declarações ou enviar dados. Conversões otimizadas para leads continuam desativadas. Esta preparação técnica não certifica conformidade nem resolve a classificação de categoria sensível.
+Não guardar GCLIDs reais no repositório, issues, planilhas públicas ou logs. Não coletar nome, telefone, conversa ou situação afetiva neste serviço. Referência associável a clique/atendimento não equivale a dado anônimo.
 
-Somente após validar origem e marcos reais, criar/testar a ação offline inicialmente sem uso em lances. Não lançar uma campanha otimizando para uma ação vazia/não alimentada. Configurar as tags da conta nova separadamente; o contêiner GTM existente pode ser mantido. Não usar o ID da conta (com hífens) como ID AW de conversão.
+## Medição ainda pendente
 
-## Verificação local
+Referência criada ou botão clicado não comprovam mensagem enviada. O operador precisa confirmar mensagem recebida, orçamento, interesse após conhecer o orçamento e pagamento. O cliente pode apagar o código e perder a associação. Sem GCLID ou em páginas de serviço não instrumentadas também pode faltar referência. Não há API do WhatsApp, tabela de marcos ou exportador implementado.
 
-`node --test attribution/worker.test.mjs`
+Validar condições do método e preparar rotina privada de classificação antes de enviar resultados reais. Conversões otimizadas para leads permanecem desligadas. Não marcar consentimento como concedido se não coletado. Não importar identificadores sintéticos nem lançar campanha otimizando para ação vazia.
 
-Os testes cobrem as proteções antes de acessar o banco. A persistência em D1 e o fluxo móvel completo precisam ser verificados após implantação; não são comprovados por esses testes.
+## Testes
 
-## Cliente da home com captura condicionada
+Executar `node --test attribution/client.test.mjs attribution/worker.test.mjs`.
 
-`assets/whatsapp-reference.js` retorna imediatamente quando `data-enabled` não é `true`. Na home está true, condicionado a GCLID e marcador `mm_source=ads4241785866`. Sem esses parâmetros ou estado autorizado da mesma aba, não cria referência. Esse marcador separa operacionalmente campanhas; não autentica a origem nem prova que o clique veio da conta nova. No Google Ads, adicionar `mm_source=ads4241785866` ao sufixo do URL final da campanha nova. Não usar o marcador nas campanhas antigas.
+14 testes locais cobrem captura automática sem consentimento fictício, quatro links, reutilização, falhas, isolamento, validação de payload, banco, rate limit e limpeza. Não substituem validação do Worker implantado.
 
-Quando ativado, lê apenas GCLID da URL ou estado consentido da mesma aba por até 24h. O aviso opcional aparece após o bloco inicial para autorizar ou recusar; quem não autoriza segue sem referência. UUID e GCLID só são guardados na sessão e enviados após autorização real. Não captura parâmetros de navegação adicionais. Links preservam destino wa.me, número, texto original e atributos. Não intercepta cliques nem modifica GTM/dataLayer. Uma resposta tardia após revogação não decora os links.
-
-Limites: apenas home; páginas de serviços ainda não carregam o cliente. Quem clicar antes de a referência ficar pronta, não autorizar, remover o texto ou não tiver GCLID ficará sem atribuição por este mecanismo. Não há recuperação de mensagens pelo WhatsApp/API. Recusar retira referência dos próximos links, mas não apaga registro existente no D1. O aviso rege apenas esta nova referência; não é um gerenciador de consentimento para as tags antigas.
-
-Codificação automática confirmada como Sim pelo responsável. Antes de importar: validar elegibilidade do método para o serviço e definir rotina privada para qualificação após orçamento e vendas pagas. Nenhum dado é enviado ao Google por este cliente. O banco de referências continua sem tabela de marcos: operador não tem ainda um exportador pronto para importação. Em 29/10 não há conversão real nova para upload.
-
-`diagnostico/integracao.html` usa o mesmo cliente em modo sintético, ignora IDs reais da URL e usa chave de sessão separada. Não carrega GTM. Registros TEST_ONLY nunca devem ser importados no Google Ads.
-
-Teste do cliente: `node --test attribution/client.test.mjs`.
+Testes móveis anteriores confirmaram referência no WhatsApp e vínculo D1 com identificadores TEST_ONLY, na versão antiga com autorização. Não comprovam a nova versão automática ou atribuição a clique real. `diagnostico/integracao.html` utiliza o novo cliente com identificador fictício e armazenamento separado, sem GTM. `diagnostico/referencia.html` também foi atualizado para o payload sem consentimento.
