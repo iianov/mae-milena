@@ -28,7 +28,7 @@
   }).map(link => ({ link, original: link.getAttribute('href') }));
   const decorate = reference => links.forEach(({link, original}) => {
     const url = new URL(original);
-    url.searchParams.set('text', (url.searchParams.get('text') || '') + '\nRef. ' + reference);
+    url.searchParams.set('text', (url.searchParams.get('text') || '') + '\nCódigo de atendimento: ' + reference);
     link.setAttribute('href', url.href);
   });
   const persist = () => { try { sessionStorage.setItem(key, JSON.stringify(state)); } catch { /* Continua em memória. */ } };

@@ -48,7 +48,7 @@ test('automatically decorates all four links without a consent field or interfac
   for (const link of s.links) {
     const url = new URL(link.getAttribute('href'));
     assert.equal(url.origin, 'https://wa.me'); assert.equal(url.pathname, '/5511971162445');
-    assert.equal(url.searchParams.get('text'), 'Olá\nRef. ' + ref);
+    assert.equal(url.searchParams.get('text'), 'Olá\nCódigo de atendimento: ' + ref);
   }
 });
 test('failed request keeps links unchanged and reload reuses the same UUID', async () => {
@@ -61,7 +61,7 @@ test('reloading a completed attempt reuses reference without another network req
   const s = setup(); await flush();
   const reload = setup({memory: s.memory}); await flush();
   assert.equal(reload.requests.length, 0);
-  assert(reload.links.every(link => new URL(link.getAttribute('href')).searchParams.get('text') === 'Olá\nRef. ' + ref));
+  assert(reload.links.every(link => new URL(link.getAttribute('href')).searchParams.get('text') === 'Olá\nCódigo de atendimento: ' + ref));
 });
 test('pending request does not alter or block WhatsApp links', async () => {
   const s = setup({delayed: true});

@@ -8,7 +8,7 @@ import {webcrypto} from 'node:crypto';
 const pages = ['amarracao-amorosa', 'adocamento-amoroso', 'uniao-de-casal', 'afastamento-de-rivais', 'sobre', 'depoimentos'];
 const root = new URL('../', import.meta.url);
 const code = readFileSync(new URL('assets/whatsapp-reference.js', root), 'utf8');
-const tag = '<script src="/assets/whatsapp-reference.js?v=20261029-3" data-enabled="true" defer></script>\n';
+const tag = '<script src="/assets/whatsapp-reference.js?v=20261030-1" data-enabled="true" defer></script>\n';
 const reference = 'MM-1234567890ABCDEF12345678';
 const flush = () => new Promise(resolve => setImmediate(resolve));
 
@@ -48,7 +48,7 @@ for (const page of pages) {
       if (original.origin === 'https://wa.me' && original.pathname === '/5511971162445') {
         count++;
         const actual = new URL(link.getAttribute());
-        assert.equal(actual.searchParams.get('text'), original.searchParams.get('text') + '\nRef. ' + reference);
+        assert.equal(actual.searchParams.get('text'), original.searchParams.get('text') + '\nCódigo de atendimento: ' + reference);
         actual.searchParams.set('text', original.searchParams.get('text'));
         assert.equal(actual.origin + actual.pathname + actual.hash, original.origin + original.pathname + original.hash);
         assert.deepEqual([...actual.searchParams], [...original.searchParams]);
@@ -72,6 +72,6 @@ test('navigation from Home through all sitelinks and back reuses one GCLID and r
     assert.equal(s.requests.length, 0);
     const whatsapp = s.links.filter(link => link.href.startsWith('https://wa.me/5511971162445'));
     assert(whatsapp.length > 0);
-    assert(whatsapp.every(link => new URL(link.getAttribute()).searchParams.get('text').endsWith('\nRef. ' + reference)));
+    assert(whatsapp.every(link => new URL(link.getAttribute()).searchParams.get('text').endsWith('\nCódigo de atendimento: ' + reference)));
   }
 });
